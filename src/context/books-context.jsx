@@ -1,0 +1,67 @@
+import { createContext, useEffect, useState } from 'react'
+import { api } from '../mocks/books'
+import { onReadListChange } from '../utils'
+import { useMemo } from 'react'
+
+export const BooksContext = createContext({
+  books: [],
+  readList: [],
+  genre: '',
+  pages: 0,
+  maxPages: 0,
+  ListOfGenres: [],
+  updateBooks: () => [],
+  updateGenre: () => '',
+  updatePages: () => 0,
+  updateReadList: () => [],
+  onSelectChange: () => '',
+  onRangeChange: () => 0,
+})
+
+export const AppProvider = ({ children }) => {
+  const [books, updateBooks] = useState([])
+  const [genre, updateGenre] = useState('')
+  const [pages, updatePages] = useState(0)
+  const [readList, updateReadList] = useState([])
+
+  const onSelectChange = ({ genre }) => updateGenre(genre)
+  const onRangeChange = ({ value }) => updatePages(value)
+
+  useEffect(() => {
+    api.books.getAll().then(updateBooks)
+  }, [])
+
+  useEffect(() => {
+    const unsubscribeFn = onReadListChange(updateReadList)
+    return () => unsubscribeFn()
+  }, [])
+
+  const maxPages = useMemo(() => {
+    return Math.max(...books.map(item => item.pages))
+  }, [books])
+
+  const ListOfGenres = useMemo(() => {
+    return Array.from(new Set(books.map(book => book.genre)))
+  }, [books])
+
+  return (
+    <BooksContext.Provider
+      value={{
+        books,
+        genre,
+        pages,
+        readList,
+        maxPages,
+        ListOfGenres,
+        updateGenre,
+        updatePages,
+        updateReadList,
+        updateBooks,
+        onSelectChange,
+        onRangeChange,
+      }}
+    >
+      {children}
+    </BooksContext.Provider>
+  )
+}
