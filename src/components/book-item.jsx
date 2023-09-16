@@ -1,6 +1,23 @@
-function BookItem({ cover, title }) {
+import { useDrag } from 'react-dnd'
+import { itemTypes } from '../utils/constants'
+
+function BookItem({ id, cover, title }) {
+
+  const [{ isDragging }, dragRef] = useDrag({
+    type: itemTypes.BOOK,
+    item: { id },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const opacity = isDragging ? "opacity-50" : "opacity-100"
+  const blur = isDragging ? "blur-sm" : ''
+
   return (
-    <li className="flex  flex-col bg-neutral-800">
+    <li
+      ref={dragRef}
+      className={`flex flex-col transition-all bg-neutral-800 ${blur} ${opacity}}`}>
       <img
         className="max-h-[380px] aspect-[9/14] object-cover"
         src={cover}

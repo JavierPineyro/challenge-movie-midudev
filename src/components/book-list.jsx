@@ -9,8 +9,8 @@ function BookList() {
     <>
       {books.length === 0 && <NoResults />}
       <ul className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-4">
-        {books.map(book => (
-          <BookItem key={book.ISBN} title={book.title} cover={book.cover} />
+        {books.map(({ ISBN, title, cover }) => (
+          <BookItem key={ISBN} id={ISBN} title={title} cover={cover} />
         ))}
       </ul>
     </>
