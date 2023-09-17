@@ -1,23 +1,31 @@
 import { useDrag } from 'react-dnd'
 import { itemTypes } from '../utils/constants'
+import { useBook } from '../hooks/useBook'
 
 function BookItem({ id, cover, title }) {
 
-  const [{ isDragging }, dragRef] = useDrag({
+  const { addToReadList } = useBook()
+
+  const [{ opacity, blur }, dragRef] = useDrag({
     type: itemTypes.BOOK,
     item: { id },
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult()
+      if (item && dropResult) {
+        addToReadList({ id: dropResult.id })
+      }
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
+      opacity: monitor.isDragging() ? 'opacity-50' : 'opacity-100',
+      blur: monitor.isDragging() ? 'blur-xs' : '',
     }),
-  });
-
-  const opacity = isDragging ? "opacity-50" : "opacity-100"
-  const blur = isDragging ? "blur-sm" : ''
+  })
 
   return (
     <li
       ref={dragRef}
-      className={`flex flex-col transition-all bg-neutral-800 ${blur} ${opacity}}`}>
+      className={`flex flex-col cursor-grab transition-colors bg-neutral-800 ${blur} ${opacity}`}>
       <img
         className="max-h-[380px] aspect-[9/14] object-cover"
         src={cover}

@@ -1,6 +1,6 @@
 export function onReadListChange(callback) {
   function getReadList() {
-    const readList = JSON.parse(localStorage.getItem('readList')) ?? '[]'
+    const readList = JSON.parse(window.localStorage.getItem('readList') || '[]')
     callback(readList)
   }
   function onStorage(event) {
@@ -13,4 +13,8 @@ export function onReadListChange(callback) {
   getReadList()
 
   return () => window.removeEventListener('storage', onStorage)
+}
+
+export function saveInStorage(keyword, items) {
+  window.localStorage.setItem(keyword, JSON.stringify(items))
 }

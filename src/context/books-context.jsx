@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react'
 import { api } from '../mocks/books'
-import { onReadListChange } from '../utils'
+import { onReadListChange, saveInStorage } from '../utils'
 import { useMemo } from 'react'
 
 export const BooksContext = createContext({
@@ -28,7 +28,16 @@ export const AppProvider = ({ children }) => {
   const onRangeChange = ({ value }) => updatePages(value)
 
   useEffect(() => {
-    api.books.getAll().then(updateBooks)
+    const booksList = JSON.parse(window.localStorage.getItem('books') ?? '[]')
+
+    if (!booksList || booksList.length === 0) {
+      api.books.getAll().then(data => {
+        saveInStorage('books', data)
+        updateBooks(data)
+      })
+    } else {
+      updateBooks(booksList)
+    }
   }, [])
 
   useEffect(() => {

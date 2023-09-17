@@ -18,7 +18,7 @@ function Filters() {
       <select
         value={genre}
         onChange={handleSelectChange}
-        className="block px-1 py-1 text-base border focus:ring-blue-500  bg-gray-700 border-gray-600 placeholder-gray-400 text-white  focus:border-blue-500"
+        className="block py-2 text-base border focus:ring-blue-500  bg-gray-700 border-gray-600 placeholder-gray-400 text-white  focus:border-blue-500"
         name="genre"
       >
         <option value="">All</option>
